@@ -88,6 +88,7 @@ then
     install_go &> /dev/null
 fi
 
+install_go &> /dev/null
 echo "Cluster setup successfully"
 
 # Copy adjustment scripts 
