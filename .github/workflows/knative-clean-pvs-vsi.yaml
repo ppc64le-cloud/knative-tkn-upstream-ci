@@ -31,8 +31,8 @@ jobs:
 
     - name: Fetch CRN of workspace
       run: |
-        echo "Fetching CRN of workspace 'rdr-knative-prow-testbed-syd05'"
-        crn=$(ibmcloud pi workspace list --json | jq  '.[] | .workspaces[] | select(.name == "rdr-knative-prow-testbed-syd05") | "\(.details.crn)"' | tr -d '"')
+        echo "Setting CRN value of workspace"
+        crn='crn:v1:bluemix:public:power-iaas:syd05:a/7cfbd5381a434af7a09289e795840d4e:af3e8574-29ea-41a2-a9c5-e88cba5c5858::'
         echo "CRN=$crn" >> $GITHUB_ENV
     
     - name: Set the target workspace
