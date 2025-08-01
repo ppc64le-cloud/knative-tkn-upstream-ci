@@ -1,3 +1,18 @@
+diff --git a/test/kafka/strimzi-cluster-operator.yaml b/test/kafka/strimzi-cluster-operator.yaml
+index 58881521e..380392b62 100644
+--- a/test/kafka/strimzi-cluster-operator.yaml
++++ b/test/kafka/strimzi-cluster-operator.yaml
+@@ -16301,6 +16301,10 @@ spec:
+             - name: co-config-volume
+               mountPath: /opt/strimzi/custom-config/
+           env:
++            - name: STRIMZI_KUBERNETES_VERSION
++              value: |
++                major=K8S_VER_MAJOR
++                minor=K8S_VER_MINOR
+             - name: STRIMZI_NAMESPACE
+               valueFrom:
+                 fieldRef:
 diff --git a/test/config/monitoring.yaml b/test/config/monitoring.yaml
 index ca5244841..cca2f0748 100644
 --- a/test/config/monitoring.yaml
