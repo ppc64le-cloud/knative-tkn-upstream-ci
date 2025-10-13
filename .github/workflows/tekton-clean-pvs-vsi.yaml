@@ -1,13 +1,13 @@
-name: Cleanup unused Knative PVS and subnets
+name: Cleanup unused Tekton PVS and subnets
 
 on:
   schedule:
-    - cron: "35 17 * * *"  # Runs daily at ~11:05 PM IST)
+    - cron: "35 19 * * *"  # Runs daily at ~1:05 AM IST)
   workflow_dispatch:
 
 env:
-  PCLOUD_IBM_API_KEY: ${{ secrets.PCLOUD_IBM_API_KEY }}
-  PCLOUD_IBM_REGION: au-syd
+  TEKTON_IBM_API_KEY: ${{ secrets.TEKTON_IBM_API_KEY }}
+  TEKTON_IBM_REGION: au-syd
 
 jobs:
   delete-pvs-subnet:
@@ -27,12 +27,12 @@ jobs:
 
     - name: Authenticate with IBM Cloud CLI
       run: |
-        ibmcloud login --apikey "${PCLOUD_IBM_API_KEY}" -r "${PCLOUD_IBM_REGION}" > /dev/null 2>&1
+        ibmcloud login --apikey "${TEKTON_IBM_API_KEY}" -r "${TEKTON_IBM_REGION}" > /dev/null 2>&1
 
     - name: Fetch CRN of workspace
       run: |
-        echo "Fetching CRN of workspace 'rdr-knative-prow-testbed-syd04'"
-        crn=$(ibmcloud pi workspace list --json | jq  '.[] | .workspaces[] | select(.name == "rdr-knative-prow-testbed-syd04") | "\(.details.crn)"' | tr -d '"')
+        echo "Fetching CRN of workspace 'rdr-ghatwala-tekton-knativeCI-PROD-syd05'"
+        crn=$(ibmcloud pi workspace list --json | jq  '.[] | .workspaces[] | select(.name == "rdr-ghatwala-tekton-knativeCI-PROD-syd05") | "\(.details.crn)"' | tr -d '"')
         echo "CRN=$crn" >> $GITHUB_ENV
     
     - name: Set the target workspace
