@@ -1,0 +1,13 @@
+{
+  "auths": {
+    "na.artifactory.swg-devops.com": {
+      "auth": "<add-auth-key-here>"
+    },
+    "quay.io": {
+      "auth": "<add-auth-key-here>"
+    },
+    "icr.io": {
+      "auth": "<add-auth-key-here>"
+    }
+  }
+}

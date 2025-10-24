@@ -1,0 +1,26 @@
+diff --git a/test/e2e-tests.sh b/test/e2e-tests.sh
+index ee6e11910..ccd015369 100755
+--- a/test/e2e-tests.sh
++++ b/test/e2e-tests.sh
+@@ -39,7 +39,7 @@ initialize $@
+ # If we got this far, the operator installed Knative Serving
+ header "Running tests for Knative Operator"
+ failed=0
+-
++export CGO_ENABLED=1
+ # Run the integration tests
+ go_test_e2e -timeout=20m ./test/e2e || failed=1
+ 
+diff --git a/vendor/knative.dev/hack/e2e-tests.sh b/vendor/knative.dev/hack/e2e-tests.sh
+index 331511cc4..4be5d7011 100644
+--- a/vendor/knative.dev/hack/e2e-tests.sh
++++ b/vendor/knative.dev/hack/e2e-tests.sh
+@@ -57,7 +57,7 @@ function setup_test_cluster() {
+   # Set the actual project the test cluster resides in
+   # It will be a project assigned by Boskos if test is running on Prow,
+   # otherwise will be ${E2E_GCP_PROJECT_ID} set up by user.
+-  E2E_PROJECT_ID="$(gcloud config get-value project)"
++  #E2E_PROJECT_ID="$(gcloud config get-value project)"
+   export E2E_PROJECT_ID
+   readonly E2E_PROJECT_ID
+ 
