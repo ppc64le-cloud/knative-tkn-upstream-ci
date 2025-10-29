@@ -30,19 +30,14 @@ use_docker = args.use_docker or os.getenv("USE_DOCKER", "True").lower() == "true
 knative_org = os.getenv("KNATIVE_ORG")
 knative_repo = os.getenv("KNATIVE_REPO")
 knative_release = os.getenv("KNATIVE_RELEASE")
-#use_docker = True  # Set to False to use Podman
-#repo_url = f"https://github.com/{knative_org}/{knative_repo}.git"  # Replace with actual repo
 repo_url = "https://github.com/$KNATIVE_ORG/$KNATIVE_REPO.git"  # Replace with actual repo
 
 # Extract repo name from URL
 repo_name = repo_url.rstrip("/").split("/")[-1]
-#clone_path = f"/go/src/github.com/{knative_org}/{knative_repo}"
 clone_path = "$GOPATH/src/github.com/$KNATIVE_ORG/$KNATIVE_REPO"
-
 
 # Configuration
 container_name = "dev-container"
-#image_name = "quay.io/powercloud/knative-prow-tests:latest"
 image_name = "quay.io/p_serverless/knative-prow-tests:debug"
 mount_dir = os.path.abspath("./..")
 kind_cluster_name = "mkpod"
@@ -51,10 +46,7 @@ kubeconfig_dir = os.path.expanduser("~/.kube")
 def run_cmd(cmd, check=True, capture_output=False):
     print(f"Running: {' '.join(cmd)}")
     return subprocess.run(cmd, check=check, capture_output=capture_output, text=True)
-'''
-def create_kind_cluster():
-    run_cmd(["kind", "create", "cluster", "--image", f"{kind_image}:{k8s_version}", "--name", kind_cluster_name])
-'''
+
 def create_kind_cluster():
     # Define the config    
     kind_config = {
@@ -63,6 +55,17 @@ def create_kind_cluster():
         "nodes": [
             {
                 "role": "control-plane",
+                "image": f"{kind_image}:{k8s_version}",
+                "extraMounts": [
+                    {
+                        "hostPath": f"{mount_dir}/debug/config.json",
+                        "containerPath": "/var/lib/kubelet/config.json"
+                    }
+                ]
+            },
+            {
+                "role": "worker",
+                "image": f"{kind_image}:{k8s_version}",
                 "extraMounts": [
                     {
                         "hostPath": f"{mount_dir}/debug/config.json",
@@ -77,7 +80,7 @@ def create_kind_cluster():
     with open(f"{mount_dir}/debug/kind-config.yaml", "w") as f:
         yaml.dump(kind_config, f)
 
-    run_cmd(["kind", "create", "cluster", "--image", f"{kind_image}:{k8s_version}", "--config", f"{mount_dir}/debug/kind-config.yaml", "--name", kind_cluster_name])
+    run_cmd(["kind", "create", "cluster", "--config", f"{mount_dir}/debug/kind-config.yaml", "--name", kind_cluster_name])
 
 def delete_kind_cluster():
     run_cmd(["kind", "delete", "cluster", "--name", kind_cluster_name])
