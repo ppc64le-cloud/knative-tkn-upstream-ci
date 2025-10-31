@@ -55,7 +55,9 @@ Replace/Add creds of the IBM container registry in the config.json file
 
 ### 4. Edit `.env`. 
 
-Update the Knative repo project name, branch and other environment variable required to run the test. To update the variable values refer `ppc64le` prow  Knative job configs: [knative-prow-jobs](https://github.com/kabhiibm/test-infra/tree/master/config/jobs/periodic) 
+To run tests for a Knative project, update the relevant environment variables such as the project name, branch, and other required settings. These variables are typically defined in a `.env` file.
+
+Refer to the `ppc64le` Prow Knative job configurations for guidance: [knative-prow-jobs](https://github.com/kabhiibm/test-infra/tree/master/config/jobs/periodic) 
 
 For example: `.env` file for `operator` testing
 
@@ -87,10 +89,11 @@ export INGRESS_CLASS=contour.ingress.networking.knative.dev
 #export EVENTING_NAMESPACE=knative-eventing
 #export BROKER_CLASS=Kafka
 ```
+Most common variables for different Knative projects are included in the `.env` file in commented form. Uncomment and modify them as needed based on your testing requirements.
 
 ### 5. Start testing/debugging
 
-Run `debug-knative.py` program to setup the KinD (1 master, 1 worker nodes). It will automatically run the admustment scripts for debugging. It will also create and provide a container with testing/debugging environment.
+Run `debug-knative.py` program to setup the KinD (1 master, 1 worker nodes). It will automatically run the adjustment scripts for debugging. It will also create and provide a container with testing/debugging environment.
 
 ```bash
 $ ./debug-knative.py 
@@ -192,7 +195,7 @@ File '/home/ubuntu/kumar/abhcd/knative-tkn-upstream-ci/debug/kind-config.yaml' h
 
 Note
 -----
-The `debug-adjust` directory currently contains debugging adjustment scripts for the `main` branch of the repository.
+The debug-adjust directory currently contains debugging adjustment scripts for the main branch of the repository.
 
-For other branches, create a directory named after the branch, and place the corresponding adjustment script and patch file inside it. Then, update the `KNATIVE_RELEASE` environment variable in the `.env` file with the branch name.
+For other branches, create a directory named after the branch, and place the corresponding adjustment script and patch file inside it. Then, update the `KNATIVE_RELEASE` environment variable in the .env file with the branch name.
 
