@@ -6,6 +6,7 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
+DEBUG=false
 PVS_REGION='syd'
 PVS_ZONE='syd04'
 PVS_SVC_ID='e04ebc6a-3b99-4b0f-9dcc-f6352033f44b'

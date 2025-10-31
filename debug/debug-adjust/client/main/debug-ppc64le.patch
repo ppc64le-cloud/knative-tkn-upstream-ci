@@ -1,0 +1,28 @@
+diff --git a/test/common.sh b/test/common.sh
+index 42bcfcc5..0d69f6bc 100755
+--- a/test/common.sh
++++ b/test/common.sh
+@@ -15,7 +15,9 @@
+ # limitations under the License.
+ 
+ # shellcheck disable=SC1090
+-source "$(go run knative.dev/hack/cmd/script e2e-tests.sh)"
++SOURCED_FILES=$(go run knative.dev/hack/cmd/script e2e-tests.sh --verbose)
++sed -i '/E2E_PROJECT_ID="$(gcloud config get-value project)"/d' $SOURCED_FILES
++source $SOURCED_FILES
+ 
+ export INGRESS_CLASS=${INGRESS_CLASS:-istio.ingress.networking.knative.dev}
+ 
+diff --git a/test/e2e-tests.sh b/test/e2e-tests.sh
+index a12b94c2..070a54dc 100755
+--- a/test/e2e-tests.sh
++++ b/test/e2e-tests.sh
+@@ -50,7 +50,7 @@ run() {
+ 
+ integration_test() {
+   header "Running tests for Knative Serving $KNATIVE_SERVING_VERSION and Eventing $KNATIVE_EVENTING_VERSION"
+-
++  export CGO_ENABLED=1
+   go_test_e2e -timeout=45m ./test/e2e || fail_test
+ }
+ 

@@ -2,12 +2,15 @@
 
 # This script sets up the k8s environment and updates the knative source for running the tests succesfully.
 
+if [[ ${DEBUG} == false ]]
+then
 SSH_ARGS="-i /root/.ssh/ssh-key -o MACs=hmac-sha2-256 -o StrictHostKeyChecking=no -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null"
 
 # Check if the Hosts file is provided as an argument
 if [ -z "$1" ]; then
     echo "Host file not provided"
     exit 1
+fi
 fi
 
 # exit if KNATIVE_REPO is not set
@@ -24,6 +27,8 @@ then
     exit 1
 fi
 
+if [[ ${DEBUG} == false ]]
+then
 while IFS= read -r line; do
     # Copy the config file to the remote server
     scp ${SSH_ARGS} /root/.docker/config.json root@${line}:/var/lib/kubelet/config.json
@@ -34,6 +39,7 @@ while IFS= read -r line; do
         continue
     }
 done < "$1"
+fi
 
 create_registry_secrets_in_serving(){
     kubectl -n knative-serving create secret generic registry-creds --from-file=config.json=/root/.docker/config.json
@@ -41,16 +47,21 @@ create_registry_secrets_in_serving(){
 }
 
 install_contour(){
+    ARCH=amd64
+    if [[ $(arch) != "x86_64" ]]
+    then
+	ARCH=$(arch)
+    fi
     # TODO: remove yq dependency
-    wget https://github.com/mikefarah/yq/releases/download/v4.25.3/yq_linux_amd64 -P /tmp
-    chmod +x /tmp/yq_linux_amd64
+    wget https://github.com/mikefarah/yq/releases/download/v4.25.3/yq_linux_$ARCH -P /tmp
+    chmod +x /tmp/yq_linux_$ARCH
     ISTIO_RELEASE=knative-v1.13.1
     echo "Contour is being installed..."
     local envoy_replacement="icr.io/upstream-k8s-registry/knative/maistra/envoy:v2.4"
     local contour_replacement="icr.io/upstream-k8s-registry/knative/contour:v1.29.1"
     # install istio-crds
     curl --connect-timeout 10 --retry 5 -sL https://github.com/knative-sandbox/net-istio/releases/download/${ISTIO_RELEASE}/istio.yaml | \
-    /tmp/yq_linux_amd64 '. | select(.kind == "CustomResourceDefinition"), select(.kind == "Namespace")' | kubectl apply -f -
+	    /tmp/yq_linux_$ARCH '. | select(.kind == "CustomResourceDefinition"), select(.kind == "Namespace")' | kubectl apply -f -
     # install contour
     curl --connect-timeout 10 --retry 5 -sL https://raw.githubusercontent.com/knative/serving/main/third_party/contour-latest/contour.yaml | \
     sed 's!\(image: \).*docker.io.*!\1'$envoy_replacement'!g' | sed 's!\(image: \).*ghcr.io.*!\1'$contour_replacement'!g' | kubectl apply -f -
@@ -87,3 +98,9 @@ echo "Cluster setup successfully"
 cp adjust/${KNATIVE_REPO}/${KNATIVE_RELEASE}/* /tmp/
 
 chmod +x /tmp/adjust.sh
+
+if [[ ${DEBUG} == true ]]
+then
+    cp debug/debug-adjust/${KNATIVE_REPO}/${KNATIVE_RELEASE}/* /tmp/
+    chmod +x /tmp/debug-adjust.sh
+fi
