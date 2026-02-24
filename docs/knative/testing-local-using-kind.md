@@ -7,6 +7,7 @@ The following Knative projects are currently supported for local testing and deb
 - operator
 - client
 - eventing
+- serving
 
 ## Prerequisites  
 
@@ -173,11 +174,70 @@ Source code patched successfully
 
 A container shell is automatically provided by the program where any test command can be executed.
 
+The following command is used for running e2e tests for client, operator, and eventing
+
 Example:
 
 ```bash
 root@kumar-argo:/go/src/github.com/knative/operator# ./test/e2e-tests.sh --run-tests
 ```
+When testing `Knative Serving with Kourier ingress`, the worker node IP address must be provided as the ingress endpoint before running e2e tests.
+
+Kourier uses the worker node IP for external access.
+
+- If the cluster has 1 control-plane and 1 worker, use the worker node IP.
+
+- If the cluster has 1 control-plane and multiple worker nodes, the IP of any worker node can be used.
+
+**Get Worker Node IP**
+
+Run:
+
+```bash
+kubectl get nodes -o wide
+```
+
+Example output:
+```bash
+NAME                  STATUS   ROLES           AGE   VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE                         KERNEL-VERSION                  CONTAINER-RUNTIME
+mkpod-control-plane   Ready    control-plane   64s   v1.34.1   172.18.0.3    <none>        Debian GNU/Linux 12 (bookworm)   5.14.0-611.30.1.el9_7.ppc64le   containerd://2.0.2
+mkpod-worker          Ready    <none>          51s   v1.34.1   172.18.0.2    <none>        Debian GNU/Linux 12 (bookworm)   5.14.0-611.30.1.el9_7.ppc64le   containerd://2.0.2
+mkpod-worker2         Ready    <none>          52s   v1.34.1   172.18.0.4    <none>        Debian GNU/Linux 12 (bookworm)   5.14.0-611.30.1.el9_7.ppc64le   containerd://2.0.2
+```
+
+Use the `INTERNAL-IP` of the worker node
+
+**Set Ingress Endpoint**
+
+Export the worker node IP as the ingress endpoint before executing the test script
+
+```bash
+export TEST_OPTIONS=$TEST_OPTIONS' --ingressendpoint '${server_add}
+```
+
+Example:
+
+```bash
+export TEST_OPTIONS=$TEST_OPTIONS' --ingressendpoint '172.18.0.4
+```
+
+**Run e2e Tests with Latest Kourier Version**
+
+After setting the ingress endpoint, execute the Serving e2e tests with Kourier enabled:
+
+```bash
+root@kumar-argo:/go/src/github.com/knative/operator# ./test/e2e-tests.sh --run-tests --kourier-version latest
+```
+
+**Point to Note**
+
+For Knative Serving local debug testing with `1 control-plane and 2 worker nodes`, the minimum required VM configuration is:
+
+- 8 CPUs
+- At least 15 GB free disk space
+- ~16 GB memory recommended
+
+For more information on Knative Serving testing and available test options, refer to the official documentation: [knative/serving](https://github.com/knative/serving/blob/1e1de2f6cea107d434833f80a4478a63767c2c93/test/README.md)
 
 ### 7. Exit test/debug enviroment
 
