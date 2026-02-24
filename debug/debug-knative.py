@@ -50,31 +50,43 @@ def run_cmd(cmd, check=True, capture_output=False):
 def create_kind_cluster():
     # Define the config    
     kind_config = {
-        "kind": "Cluster",
-        "apiVersion": "kind.x-k8s.io/v1alpha4",
-        "nodes": [
-            {
-                "role": "control-plane",
-                "image": f"{kind_image}:{k8s_version}",
-                "extraMounts": [
-                    {
-                        "hostPath": f"{mount_dir}/debug/config.json",
-                        "containerPath": "/var/lib/kubelet/config.json"
-                    }
-                ]
-            },
-            {
-                "role": "worker",
-                "image": f"{kind_image}:{k8s_version}",
-                "extraMounts": [
-                    {
-                        "hostPath": f"{mount_dir}/debug/config.json",
-                        "containerPath": "/var/lib/kubelet/config.json"
-                    }
-                ]
-            }
-        ]
-    }
+    "kind": "Cluster",
+    "apiVersion": "kind.x-k8s.io/v1alpha4",
+    "nodes": [
+        {
+            "role": "control-plane",
+            "image": f"{kind_image}:{k8s_version}",
+            "extraMounts": [
+                {
+                    "hostPath": f"{mount_dir}/debug/config.json",
+                    "containerPath": "/var/lib/kubelet/config.json"
+                }
+            ]
+        },
+        #worker 1
+        {
+            "role": "worker",
+            "image": f"{kind_image}:{k8s_version}",
+            "extraMounts": [
+                {
+                    "hostPath": f"{mount_dir}/debug/config.json",
+                    "containerPath": "/var/lib/kubelet/config.json"
+                }
+            ]
+        },
+        #worker2
+        {
+            "role": "worker",
+            "image": f"{kind_image}:{k8s_version}",
+            "extraMounts": [
+                {
+                    "hostPath": f"{mount_dir}/debug/config.json",
+                    "containerPath": "/var/lib/kubelet/config.json"
+                }
+            ]
+        }
+    ]
+}
 
     # Save to YAML
     with open(f"{mount_dir}/debug/kind-config.yaml", "w") as f:
