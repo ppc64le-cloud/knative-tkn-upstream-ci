@@ -5,7 +5,7 @@ This document provides an overview of the infrastructure setup for Knative testi
 ## VSI Creation and Resource Management
 
 - Resources are provisioned in the **IBM Cloud account: `2553032 - PCLOUD Upstream CI`**.
-- The workspace used for managing infrastructure is **`rdr-knative-prow-testbed-syd04`**.
+- The workspace used for managing infrastructure is **`rdr-knative-prow-testbed-lon06`**.
 - **`kubetest2-tf`** (Terraform-based plugin) is utilized for:
   - Automating VSI creation and destruction.
 - **CentOS 9** virtual machines (VMs) are deployed as the primary test environment.
