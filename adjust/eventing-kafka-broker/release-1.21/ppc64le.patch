@@ -1,0 +1,85 @@
+diff --git a/test/kafka/strimzi-cluster-operator.yaml b/test/kafka/strimzi-cluster-operator.yaml
+index 58881521e..380392b62 100644
+--- a/test/kafka/strimzi-cluster-operator.yaml
++++ b/test/kafka/strimzi-cluster-operator.yaml
+@@ -16301,6 +16301,10 @@ spec:
+             - name: co-config-volume
+               mountPath: /opt/strimzi/custom-config/
+           env:
++            - name: STRIMZI_KUBERNETES_VERSION
++              value: |
++                major=K8S_VER_MAJOR
++                minor=K8S_VER_MINOR
+             - name: STRIMZI_NAMESPACE
+               valueFrom:
+                 fieldRef:
+diff --git a/test/config/sacura-sink-source/300-job.yaml b/test/config/sacura-sink-source/300-job.yaml
+index 2cefa2d68..633b08ee6 100644
+--- a/test/config/sacura-sink-source/300-job.yaml
++++ b/test/config/sacura-sink-source/300-job.yaml
+@@ -45,7 +45,7 @@ spec:
+ 
+       containers:
+         - name: sacura
+-          image: ghcr.io/pierdipi/sacura/sacura-7befbbbc92911c6727467cfbf23af88f
++          image: icr.io/upstream-k8s-registry/knative/bootstrap/sacura:latest
+           args:
+             - "--config"
+             - "/etc/sacura/sacura.yaml"
+diff --git a/test/config/sacura/300-job.yaml b/test/config/sacura/300-job.yaml
+index e72723bcd..cb3113921 100644
+--- a/test/config/sacura/300-job.yaml
++++ b/test/config/sacura/300-job.yaml
+@@ -37,7 +37,7 @@ spec:
+ 
+       containers:
+         - name: sacura
+-          image: ghcr.io/pierdipi/sacura/sacura-7befbbbc92911c6727467cfbf23af88f
++          image: icr.io/upstream-k8s-registry/knative/bootstrap/sacura:latest
+           args:
+             - "--config"
+             - "/etc/sacura/sacura.yaml"
+diff --git a/test/e2e_source/helpers/kafka_helper.go b/test/e2e_source/helpers/kafka_helper.go
+index a565b87c6..fb79d59b0 100644
+--- a/test/e2e_source/helpers/kafka_helper.go
++++ b/test/e2e_source/helpers/kafka_helper.go
+@@ -45,7 +45,7 @@ const (
+ 	strimziUserResource  = "kafkausers"
+ 	interval             = 3 * time.Second
+ 	timeout              = 4 * time.Minute
+-	kcatImage            = "quay.io/openshift-knative/kcat:1.7.1"
++	kcatImage            = "icr.io/upstream-k8s-registry/knative/kafkacat:v1.6.0"
+ )
+ 
+ var (
+diff --git a/third_party/keda/keda.yaml b/third_party/keda/keda.yaml
+index 7faed28d5..f38c3410f 100644
+--- a/third_party/keda/keda.yaml
++++ b/third_party/keda/keda.yaml
+@@ -9407,7 +9407,7 @@ spec:
+           value: ""
+         - name: KEDA_HTTP_DEFAULT_TIMEOUT
+           value: ""
+-        image: ghcr.io/kedacore/keda-admission-webhooks:2.10.1
++        image: icr.io/upstream-k8s-registry/knative/keda-webhook:v2.11.2
+         imagePullPolicy: Always
+         livenessProbe:
+           httpGet:
+@@ -9499,7 +9499,7 @@ spec:
+               fieldPath: metadata.namespace
+         - name: KEDA_HTTP_DEFAULT_TIMEOUT
+           value: ""
+-        image: ghcr.io/kedacore/keda-metrics-apiserver:2.10.1
++        image: icr.io/upstream-k8s-registry/knative/keda-adapter:v2.11.2
+         imagePullPolicy: Always
+         livenessProbe:
+           httpGet:
+@@ -9593,7 +9593,7 @@ spec:
+           value: ""
+         - name: KEDA_HTTP_DEFAULT_TIMEOUT
+           value: ""
+-        image: ghcr.io/kedacore/keda:2.10.1
++        image: icr.io/upstream-k8s-registry/knative/keda-main:v2.11.2
+         imagePullPolicy: Always
+         livenessProbe:
+           httpGet:
