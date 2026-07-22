@@ -25,7 +25,7 @@ setup_env() {
     # Configuration variables
     # ----------------------------
     export PCLOUD_IBM_API_KEY=${TF_VAR_powervs_api_key} # Environment variable coming from prow
-    export PCLOUD_IBM_REGION="${PCLOUD_IBM_REGION:-eu-gb}"
+    export PCLOUD_IBM_REGION="${PCLOUD_IBM_REGION:-eu-de}"
     export IMAGE_NAME="${IMAGE_NAME:-centos9-stream}"
     export SSH_PRIVATE_KEY="${SSH_PRIVATE_KEY:-~/.ssh/ssh-key}"
     export VSI_NAME="${VSI_NAME:-knative-testing}"
@@ -64,9 +64,9 @@ install_prereqs() {
 # Login to IBM Cloud
 # ----------------------------
 login_ibmcloud() { 
-    echo "Login to IBMCLOUD and login to workspace 'rdr-knative-prow-testbed-lon06'"
+    echo "Login to IBMCLOUD and login to workspace 'rdr-knative-prow-testbed-eu-de-2'"
     ibmcloud login --apikey "${PCLOUD_IBM_API_KEY}" -r "${PCLOUD_IBM_REGION}"
-    crn=$(ibmcloud pi workspace list --json | jq  '.[] | .workspaces[] | select(.name == "rdr-knative-prow-testbed-lon06") | "\(.details.crn)"' | tr -d '"')
+    crn=$(ibmcloud pi workspace list --json | jq  '.[] | .workspaces[] | select(.name == "rdr-knative-prow-testbed-eu-de-2") | "\(.details.crn)"' | tr -d '"')
     ibmcloud pi workspace target $crn
     echo $crn
 }

@@ -7,7 +7,7 @@ on:
 
 env:
   PCLOUD_IBM_API_KEY: ${{ secrets.PCLOUD_IBM_API_KEY }}
-  PCLOUD_IBM_REGION: eu-gb
+  PCLOUD_IBM_REGION: eu-de
 
 jobs:
   delete-pvs-subnet:
@@ -31,8 +31,8 @@ jobs:
 
     - name: Fetch CRN of workspace
       run: |
-        echo "Fetching CRN of workspace 'rdr-knative-prow-testbed-lon06'"
-        crn=$(ibmcloud pi workspace list --json | jq  '.[] | .workspaces[] | select(.name == "rdr-knative-prow-testbed-lon06") | "\(.details.crn)"' | tr -d '"')
+        echo "Fetching CRN of workspace 'rdr-knative-prow-testbed-eu-de-2'"
+        crn=$(ibmcloud pi workspace list --json | jq  '.[] | .workspaces[] | select(.name == "rdr-knative-prow-testbed-eu-de-2") | "\(.details.crn)"' | tr -d '"')
         echo "CRN=$crn" >> $GITHUB_ENV
     
     - name: Set the target workspace
