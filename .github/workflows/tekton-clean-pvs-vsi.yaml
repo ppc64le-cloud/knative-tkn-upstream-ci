@@ -7,7 +7,7 @@ on:
 
 env:
   TEKTON_IBM_API_KEY: ${{ secrets.TEKTON_IBM_API_KEY }}
-  TEKTON_IBM_REGION: eu-gb
+  TEKTON_IBM_REGION: eu-de
 
 jobs:
   delete-pvs-subnet:
@@ -31,8 +31,8 @@ jobs:
 
     - name: Fetch CRN of workspace
       run: |
-        echo "Fetching CRN of workspace 'rdr-tekton-CI-PROD-lon06'"
-        crn=$(ibmcloud pi workspace list --json | jq  '.[] | .workspaces[] | select(.name == "rdr-tekton-CI-PROD-lon06") | "\(.details.crn)"' | tr -d '"')
+        echo "Fetching CRN of workspace 'rdr-tekton-CI-PROD-eu-de-2'"
+        crn=$(ibmcloud pi workspace list --json | jq  '.[] | .workspaces[] | select(.name == "rdr-tekton-CI-PROD-eu-de-2") | "\(.details.crn)"' | tr -d '"')
         echo "CRN=$crn" >> $GITHUB_ENV
     
     - name: Set the target workspace
