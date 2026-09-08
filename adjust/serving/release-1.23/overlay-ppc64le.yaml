@@ -1,0 +1,56 @@
+#@ load("@ytt:overlay", "overlay")
+#@ load("helpers.lib.yaml", "system_deployment", "subset")
+
+#@overlay/match by=system_deployment("controller"), expects=1
+---
+spec:
+  template:
+    spec:
+      containers:
+      #@overlay/match by=overlay.all, expects="1+"
+      - env:
+        #@overlay/append
+        - name: SSL_CERT_DIR
+          value: /opt/certs
+        - name: DOCKER_CONFIG
+          value: /.docker
+        #@overlay/match missing_ok=True
+        volumeMounts:
+        - mountPath: .docker
+          name: registry-creds
+        - mountPath: /opt/certs
+          name: registry-certs
+      #@overlay/match missing_ok=True
+      volumes:
+      - name: registry-creds
+        secret:
+          secretName: registry-creds #! pragma: allowlist secret
+      - name: registry-certs
+        secret:
+          secretName: registry-certs   #! pragma: allowlist secret   
+#@overlay/match by=subset("Service", "kourier", "kourier-system"), expects=1
+---
+spec:
+  #@overlay/replace
+  ports:
+  - port: 80
+    name: http
+    protocol: TCP
+    targetPort: 8080
+    nodePort: 31470
+  - port: 443
+    name: https
+    protocol: TCP
+    targetPort: 8443
+    nodePort: 31475
+  #@overlay/replace
+  type: NodePort
+
+#@overlay/match by=subset("Deployment", "3scale-kourier-gateway", "kourier-system"), expects=1
+---
+spec:
+  template:
+    spec:
+      containers:
+        #@overlay/match by=overlay.index(0)
+      - image: icr.io/upstream-k8s-registry/knative/maistra/envoy:v2.4

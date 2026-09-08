@@ -1,0 +1,34 @@
+# Apply patch to skip TestCallToPublicService/external_address if loopback
+echo ">>> Patching TestCallToPublicService to skip external address when using loopback..."
+cat <<'END_PATCH' > fix_test.patch
+diff --git a/test/e2e/service_to_service_test.go b/test/e2e/service_to_service_test.go
+index 3d9a51c46..23b70feb9 100644
+--- a/test/e2e/service_to_service_test.go
++++ b/test/e2e/service_to_service_test.go
+@@ -28,6 +28,7 @@ import (
+ 	"testing"
+ 
+ 	netapi "knative.dev/networking/pkg/apis/networking"
++	pkgTest "knative.dev/pkg/test"
+ 	"knative.dev/pkg/test/logstream"
+ 	"knative.dev/serving/pkg/apis/autoscaling"
+ 	"knative.dev/serving/pkg/apis/serving"
+@@ -236,6 +237,16 @@ func TestCallToPublicService(t *testing.T) {
+ 	for _, tc := range gatewayTestCases {
+ 		t.Run(tc.name, func(t *testing.T) {
+ 			t.Parallel()
++
++			// Skip external address test if IngressEndpoint is set to loopback,
++			// because the in-cluster proxy will try to connect to localhost and fail.
++			if tc.accessibleExternally {
++				ingressEndpoint := pkgTest.Flags.IngressEndpoint
++				if strings.Contains(ingressEndpoint, "127.0.0.1") || strings.Contains(ingressEndpoint, "localhost") {
++					t.Skip("Skipping external_address test because IngressEndpoint is set to loopback")
++				}
++			}
++
+ 			if !test.ServingFlags.DisableLogStream {
+ 				cancel := logstream.Start(t)
+ 				defer cancel()
+END_PATCH
+

@@ -3,14 +3,40 @@
 import subprocess
 import os
 import signal
+import sys
 import yaml
 
 import argparse
-import os
 from dotenv import load_dotenv
 
+def check_configs():
+    debug_dir = os.path.dirname(os.path.abspath(__file__))
+    env_file = os.path.join(debug_dir, ".env")
+    env_example = os.path.join(debug_dir, ".env.example")
+    config_file = os.path.join(debug_dir, "config.json")
+    config_example = os.path.join(debug_dir, "config.json.example")
+
+    errors = []
+
+    if os.path.exists(env_example) or not os.path.exists(env_file):
+        errors.append(
+            f"Please rename '{env_example}' to '{env_file}' and update its contents before running the script."
+        )
+
+    if os.path.exists(config_example) or not os.path.exists(config_file):
+        errors.append(
+            f"Please rename '{config_example}' to '{config_file}' and update its contents before running the script."
+        )
+
+    if errors:
+        for err in errors:
+            print(f"Error: {err}")
+        sys.exit(1)
+
+check_configs()
+
 # Load environment variables from .env file
-load_dotenv()
+load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
 
 # Set up argument parser
 parser = argparse.ArgumentParser(description="Read config from CLI or .env")

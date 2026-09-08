@@ -1,0 +1,7 @@
+{
+  "auths": {
+    "icr.io": {
+      "auth": "<add-auth-key-here>"
+    }
+  }
+}
