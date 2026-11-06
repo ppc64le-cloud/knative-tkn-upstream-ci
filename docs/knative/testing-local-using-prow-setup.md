@@ -9,7 +9,7 @@
   - `config.json`: Required for cluster access to IBM Container Registry.  
 
 📌 **For the secrets manifest file, contact:**  
-[Valen Mascarenhas](mailto:Valen.Mascarenhas@ibm.com) or [Kumar Abhishek](mailto:Kumar.Abhishek2@ibm.com).  
+[Kumar Abhishek](mailto:Kumar.Abhishek2@ibm.com).  
 
 ---
 
